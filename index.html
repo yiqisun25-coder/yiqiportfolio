@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YiqiOS</title>
+<style>
+/* ================================================================
+   YiqiOS · 完整原型 v0.2
+   概念：语言启动世界。开机后，那条"界限线"成为菜单栏，
+   整个操作系统生活在一片深水之中。
+   配色：冰川水参考图（深水黑 / 冰川乳蓝 / 浪花白）
+   字体：宋体（哲学·内容） × 等宽体（系统·界面）
+   ================================================================ */
+:root {
+  --ink: #060D0F;
+  --ink2: #0E1F20;
+  --panel: rgba(10, 22, 23, 0.82);
+  --panel-solid: #0B1718;
+  --teal: #8FC1BB;
+  --foam: #CFE6E1;
+  --mist: #DCEBE8;
+  --dim: #4A6462;
+  --line: rgba(143, 193, 187, 0.22);
+  --mono: "JetBrains Mono", "SF Mono", "Cascadia Code", Consolas, monospace;
+  --serif: "Songti SC", "Noto Serif SC", "SimSun", serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 45%, var(--ink2) 100%);
+  color: var(--mist);
+  font-family: var(--mono);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: rgba(143,193,187,0.3); }
+
+/* ================= 开机层 ================= */
+#boot {
+  position: fixed; inset: 0; z-index: 100;
+  cursor: pointer;
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 45%, var(--ink2) 100%);
+  transition: opacity 1.2s ease;
+}
+#boot.done { opacity: 0; pointer-events: none; }
+#bootlog {
+  position: absolute;
+  top: clamp(24px, 8vh, 72px); left: clamp(20px, 6vw, 64px);
+  font-size: clamp(11px, 1.4vw, 14px);
+  line-height: 2; color: var(--dim); letter-spacing: 0.04em;
+}
+#bootlog .line { opacity: 0; }
+#bootlog .line.show { opacity: 1; }
+#bootlog .ok { color: var(--teal); }
+.cursor::after { content: "▌"; color: var(--teal); animation: blink 0.9s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+#skip {
+  position: absolute; bottom: 24px; right: 28px;
+  font-size: 11px; color: var(--dim); letter-spacing: 0.2em;
+  border: 1px solid var(--line); padding: 6px 14px; border-radius: 99px;
+  background: none; cursor: pointer; font-family: var(--mono);
+  transition: color .3s, border-color .3s;
+}
+#skip:hover { color: var(--teal); border-color: var(--teal); }
+
+#grenze {
+  position: absolute; top: 50%; left: 50%;
+  width: min(72vw, 680px); height: 1px;
+  background: linear-gradient(90deg, transparent, var(--teal) 30%, var(--foam) 50%, var(--teal) 70%, transparent);
+  box-shadow: 0 0 16px rgba(143,193,187,0.45);
+  transform: translate(-50%,-50%) scaleX(0); transform-origin: center;
+  transition: transform 1.1s cubic-bezier(.77,0,.18,1);
+}
+#grenze.draw { transform: translate(-50%,-50%) scaleX(1); }
+
+#quote {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, calc(-100% - 0.5em));
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(22px, 4.4vw, 44px);
+  letter-spacing: 0.08em; white-space: nowrap;
+}
+#quote .ch {
+  display: inline-block; opacity: 0; filter: blur(10px);
+  transform: translateY(0.9em) scale(1.5);
+  transition: opacity .7s ease, filter .7s ease,
+              transform .7s cubic-bezier(.22,1,.36,1), color .6s, text-shadow .6s;
+}
+#quote .ch.in { opacity: 1; filter: blur(0); transform: none; }
+#quote .ch.limit { color: var(--teal); text-shadow: 0 0 20px rgba(143,193,187,0.55); }
+
+#attrib {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, 0.9em);
+  text-align: center; opacity: 0; transition: opacity 1.2s ease; line-height: 2;
+}
+#attrib.show { opacity: 1; }
+#attrib .de { font-size: clamp(10px,1.3vw,13px); color: var(--dim); letter-spacing: .12em; font-style: italic; }
+#attrib .src { font-size: clamp(10px,1.2vw,12px); color: var(--dim); letter-spacing: .24em; }
+.fade-group { transition: opacity 1s ease; }
+.fade-group.out { opacity: 0 !important; }
+
+@media (max-aspect-ratio: 3/4) {
+  #quote { white-space: normal; width: 86vw; text-align: center; font-size: clamp(24px,7.5vw,40px); }
+}
+
+/* ================= 桌面 ================= */
+#desktop { position: fixed; inset: 0; opacity: 0; transition: opacity 1.4s ease .2s; }
+#desktop.on { opacity: 1; }
+
+/* 菜单栏 = 界限线的延续 */
+#menubar {
+  position: absolute; top: 0; left: 0; right: 0; height: 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; font-size: 12px; letter-spacing: 0.12em;
+  color: var(--dim); background: rgba(6,13,15,0.6);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  z-index: 5;
+}
+#menubar .left b { color: var(--teal); font-weight: 500; margin-right: 8px; cursor: pointer; }
+#menubar .left span { cursor: default; }
+#clock { color: var(--mist); font-variant-numeric: tabular-nums; }
+
+/* 桌面上的引言水印 */
+#wm {
+  position: absolute; bottom: 110px; left: 28px;
+  font-family: var(--serif); color: var(--dim);
+  font-size: 13px; letter-spacing: 0.2em; opacity: 0.55;
+  writing-mode: vertical-rl; user-select: none; pointer-events: none;
+}
+
+/* Dock */
+#dock {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 10px; padding: 10px 14px;
+  background: var(--panel); backdrop-filter: blur(16px);
+  border: 1px solid var(--line); border-radius: 18px;
+  z-index: 5;
+}
+.dockicon {
+  width: 52px; height: 52px; border-radius: 13px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(143,193,187,0.10), rgba(143,193,187,0.02));
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; cursor: pointer; position: relative;
+  transition: transform .18s ease, border-color .3s, background .3s;
+}
+.dockicon:hover { transform: translateY(-8px); border-color: var(--teal); }
+.dockicon .glyph { font-size: 19px; line-height: 1; color: var(--foam); }
+.dockicon .lbl { font-size: 8.5px; color: var(--dim); letter-spacing: 0.08em; }
+.dockicon.open::after {
+  content: ""; position: absolute; bottom: -7px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--teal);
+}
+
+/* ================= 窗口 ================= */
+.window {
+  position: absolute;
+  min-width: 300px;
+  background: var(--panel); backdrop-filter: blur(20px);
+  border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+  display: none; flex-direction: column; overflow: hidden;
+  animation: winin .35s cubic-bezier(.22,1,.36,1);
+}
+.window.show { display: flex; }
+.window.focus { border-color: rgba(143,193,187,0.5); }
+@keyframes winin {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+.titlebar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; cursor: grab; user-select: none;
+  border-bottom: 1px solid var(--line);
+  font-size: 11.5px; letter-spacing: 0.14em; color: var(--dim);
+}
+.titlebar:active { cursor: grabbing; }
+.dots { display: flex; gap: 7px; }
+.dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--line); cursor: pointer; transition: background .25s; }
+.dot.close:hover { background: #C96A5E; }
+.dot.mini:hover { background: var(--teal); }
+.winbody { padding: 20px 22px; overflow-y: auto; font-size: 13px; line-height: 2; max-height: 60vh; }
+.winbody::-webkit-scrollbar { width: 4px; }
+.winbody::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+/* 各窗口内容风格 */
+.winbody h2 { font-family: var(--serif); font-size: 19px; letter-spacing: .1em; margin-bottom: 12px; color: var(--foam); font-weight: 600; }
+.winbody .tagline { color: var(--teal); font-size: 12px; letter-spacing: .06em; margin-bottom: 14px; }
+.winbody p { color: var(--mist); margin-bottom: 10px; }
+.winbody .muted { color: var(--dim); font-size: 11.5px; }
+.filerow {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 11px 4px; border-bottom: 1px dashed var(--line); cursor: default;
+  transition: padding-left .25s ease;
+}
+.filerow:hover { padding-left: 12px; }
+.filerow .fname { color: var(--foam); font-family: var(--serif); font-size: 14.5px; letter-spacing: .04em; }
+.filerow .fdesc { color: var(--dim); font-size: 11px; flex: 1; }
+.filerow .ftag { color: var(--teal); font-size: 10px; border: 1px solid var(--line); padding: 1px 8px; border-radius: 99px; white-space: nowrap; }
+.contactrow { display: flex; gap: 12px; padding: 8px 0; align-items: baseline; }
+.contactrow .k { color: var(--dim); font-size: 11px; width: 74px; letter-spacing: .1em; }
+.contactrow .v { color: var(--mist); }
+
+/* 终端 */
+#win-terminal .winbody { font-size: 12.5px; line-height: 1.9; }
+#termout .tealtx { color: var(--teal); }
+#termout .foamtx { color: var(--foam); font-family: var(--serif); }
+#termline { display: flex; gap: 8px; }
+#termline .prompt { color: var(--teal); }
+#terminput {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--mist); font-family: var(--mono); font-size: 12.5px;
+}
+
+/* ================= 项目详情 · 全屏接管 ================= */
+#detail {
+  position: fixed; inset: 0; z-index: 50;
+  background: linear-gradient(180deg, #050B0C 0%, var(--ink) 40%, var(--ink2) 100%);
+  transform: translateY(100%);
+  transition: transform .7s cubic-bezier(.77,0,.18,1);
+  overflow-y: auto;
+}
+#detail.up { transform: translateY(0); }
+#detail .inner { max-width: 720px; margin: 0 auto; padding: 96px 28px 120px; }
+#detail .back {
+  position: fixed; top: 56px; left: 28px;
+  font-size: 11px; color: var(--dim); letter-spacing: .2em;
+  border: 1px solid var(--line); padding: 6px 14px; border-radius: 99px;
+  background: rgba(6,13,15,0.7); backdrop-filter: blur(8px);
+  cursor: pointer; font-family: var(--mono);
+  transition: color .3s, border-color .3s;
+}
+#detail .back:hover { color: var(--teal); border-color: var(--teal); }
+#detail h1 { font-family: var(--serif); font-size: clamp(28px,5vw,44px); color: var(--foam); letter-spacing: .08em; font-weight: 600; margin-bottom: 10px; }
+#detail .meta { color: var(--teal); font-size: 12px; letter-spacing: .14em; margin-bottom: 40px; }
+#detail h3 { font-family: var(--mono); font-size: 11px; color: var(--dim); letter-spacing: .3em; margin: 40px 0 14px; font-weight: 500; }
+#detail p { font-size: 14.5px; line-height: 2.2; color: var(--mist); margin-bottom: 12px; }
+#detail .imgph {
+  margin: 18px 0; height: 300px; border-radius: 10px;
+  border: 1px dashed var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--dim); font-size: 11px; letter-spacing: .2em;
+  background: rgba(143,193,187,0.03);
+}
+#detail a.plink { color: var(--teal); text-decoration: none; border-bottom: 1px solid var(--line); }
+
+/* ================= 氛围层：粒子 / 噪点 / 流光 ================= */
+#fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+#grain {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+}
+/* 菜单栏底边流光：像水面反光缓缓扫过 */
+#menubar::after {
+  content: ""; position: absolute; bottom: -1px; left: 0;
+  width: 180px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--foam), transparent);
+  animation: sweep 7s ease-in-out infinite;
+  opacity: 0.7;
+}
+@keyframes sweep {
+  0%   { transform: translateX(-200px); }
+  55%  { transform: translateX(100vw); }
+  100% { transform: translateX(100vw); }
+}
+
+/* ================= Mascot ================= */
+#mascot {
+  position: absolute; right: 34px; bottom: 104px; z-index: 6;
+  width: 74px; cursor: pointer; user-select: none;
+  animation: bob 4.2s ease-in-out infinite;
+  transition: transform .3s ease;
+}
+#mascot:hover { transform: scale(1.08); }
+#mascot:active { transform: scale(0.94); }
+@keyframes bob { 50% { translate: 0 -10px; } }
+#bubble {
+  position: absolute; right: 30px; bottom: 196px; z-index: 6;
+  max-width: 230px; padding: 10px 16px;
+  background: var(--panel); backdrop-filter: blur(14px);
+  border: 1px solid var(--line); border-radius: 14px 14px 3px 14px;
+  font-family: var(--serif); font-size: 13px; line-height: 1.9;
+  color: var(--foam); letter-spacing: .04em;
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1);
+}
+#bubble.say { opacity: 1; transform: none; }
+
+/* 移动端：窗口接近全屏 */
+@media (max-width: 640px) {
+  .window { left: 4vw !important; top: 60px !important; width: 92vw !important; max-height: 68vh; }
+  .dockicon { width: 46px; height: 46px; }
+  #wm { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01s !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= 开机层 ================= -->
+<div id="boot">
+  <div id="bootlog" class="fade-group"></div>
+  <div id="grenze"></div>
+  <div id="quote" class="fade-group"></div>
+  <div id="attrib" class="fade-group">
+    <div class="de">Die Grenzen meiner Sprache bedeuten die Grenzen meiner Welt.</div>
+    <div class="src">维特根斯坦 · 《逻辑哲学论》 5.6</div>
+  </div>
+  <button id="skip">跳过 ⏎</button>
+</div>
+
+<!-- ================= 桌面 ================= -->
+<div id="desktop">
+  <canvas id="fx"></canvas>
+  <div id="grain"></div>
+
+  <!-- Mascot 占位：一颗有表情的小水滴。正式形象出图后，
+       把整个 <svg> 换成 <img src="你的mascot.png" style="width:100%"> 即可 -->
+  <div id="mascot" title="点我">
+    <svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 6 C50 6 14 52 14 74 a36 36 0 0 0 72 0 C86 52 50 6 50 6 Z"
+            fill="#8FC1BB" opacity="0.92"/>
+      <path d="M50 14 C50 14 22 54 22 73 a28 28 0 0 0 12 23"
+            fill="none" stroke="#CFE6E1" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+      <circle cx="40" cy="72" r="4.2" fill="#060D0F"/>
+      <circle cx="62" cy="72" r="4.2" fill="#060D0F"/>
+      <path d="M44 86 q7 5 14 0" fill="none" stroke="#060D0F" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div id="bubble"></div>
+
+  <div id="menubar">
+    <div class="left"><b id="logo">●</b><span>YiqiOS · 语言已加载</span></div>
+    <div id="clock">--:--</div>
+  </div>
+
+  <div id="wm">我的语言的界限，意味着我的世界的界限</div>
+
+  <!-- 关于我 -->
+  <div class="window" id="win-about" style="top: 12%; left: 10%; width: 380px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>关于我.txt</span></div>
+    <div class="winbody">
+      <h2>孙一祺 Yiqi</h2>
+      <div class="tagline">内容创作者 · vibecoder</div>
+      <p>做过月销10万小红书店铺的内容运营，现在用 AI 工具做内容和视频。</p>
+      <p>媒体与传播出身（University of Sussex），相信好内容的核心是判断力——知道什么值得说，以及怎么说。</p>
+      <p>业余研究哲学与玄学。这个网站本身，就是一件正在进行的作品。</p>
+      <p class="muted">📍 沈阳 · 常驻互联网</p>
+    </div>
+  </div>
+
+  <!-- 项目 -->
+  <div class="window" id="win-projects" style="top: 16%; left: 38%; width: 460px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>项目/</span></div>
+    <div class="winbody">
+      <div class="filerow" data-pid="mom"><span class="fname">妈妈的小程序</span><span class="fdesc">用 AI 给妈妈做的微信小程序，一份数字礼物</span><span class="ftag">vibecoding</span></div>
+      <div class="filerow" data-pid="vidscout"><span class="fname">VidScout</span><span class="fdesc">短视频对标拆解工具，已上线 GitHub Pages</span><span class="ftag">工具</span></div>
+      <div class="filerow" data-pid="debug"><span class="fname">生活Debug日志</span><span class="fdesc">公众号 · 记录用 AI 调试生活的过程</span><span class="ftag">写作</span></div>
+      <div class="filerow" data-pid="client"><span class="fname">品牌内容案例</span><span class="fdesc">餐饮 / 印刷 / 文创品牌的内容与视觉系统（整理中）</span><span class="ftag">客户工作</span></div>
+      <p class="muted" style="margin-top:14px">· 点击文件名进入详情</p>
+    </div>
+  </div>
+
+  <!-- 终端 -->
+  <div class="window" id="win-terminal" style="top: 46%; left: 22%; width: 480px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>终端 — yiqi@world</span></div>
+    <div class="winbody">
+      <div id="termout"><div class="muted">输入 <span class="tealtx">help</span> 查看可用命令</div></div>
+      <div id="termline"><span class="prompt">yiqi@world&nbsp;~&nbsp;%</span><input id="terminput" autocomplete="off" spellcheck="false"></div>
+    </div>
+  </div>
+
+  <!-- 联系 -->
+  <div class="window" id="win-contact" style="top: 24%; left: 55%; width: 340px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>联系.card</span></div>
+    <div class="winbody">
+      <div class="contactrow"><span class="k">小红书</span><span class="v">@（待填）</span></div>
+      <div class="contactrow"><span class="k">公众号</span><span class="v">生活Debug日志</span></div>
+      <div class="contactrow"><span class="k">GitHub</span><span class="v">yiqisun25-coder</span></div>
+      <div class="contactrow"><span class="k">Email</span><span class="v">（待填）</span></div>
+      <p class="muted" style="margin-top:12px">合作 / 交换灵感 / 只是打个招呼，都欢迎。</p>
+    </div>
+  </div>
+
+  <div id="dock">
+    <div class="dockicon" data-win="win-about"><span class="glyph">☰</span><span class="lbl">关于</span></div>
+    <div class="dockicon" data-win="win-projects"><span class="glyph">▤</span><span class="lbl">项目</span></div>
+    <div class="dockicon" data-win="win-terminal"><span class="glyph">›_</span><span class="lbl">终端</span></div>
+    <div class="dockicon" data-win="win-contact"><span class="glyph">✉</span><span class="lbl">联系</span></div>
+  </div>
+</div>
+
+<!-- ================= 项目详情 · 全屏接管 ================= -->
+<div id="detail">
+  <button class="back">← 返回桌面 esc</button>
+  <div class="inner" id="detail-inner"></div>
+</div>
+
+<script>
+/* ================================================================
+   Part 1 · 开机时间线
+   ================================================================ */
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+const BOOT_LINES = [
+  { text: "> yiqios v0.2 · booting", delay: 300 },
+  { text: "> loading /philosophy/wittgenstein.txt", delay: 900 },
+  { text: "> rendering world from language … <span class='ok'>ok</span>", delay: 1600 },
+];
+const QUOTE = "我的语言的界限，意味着我的世界的界限。";
+const LIMIT_INDEX = new Set([5, 6, 17, 18]);
+let bootTimers = [];
+
+function t(fn, ms) { bootTimers.push(setTimeout(fn, ms)); }
+
+function playBoot() {
+  const log = $("#bootlog"); log.innerHTML = "";
+  BOOT_LINES.forEach((l) => {
+    const div = document.createElement("div");
+    div.className = "line"; div.innerHTML = l.text; log.appendChild(div);
+    t(() => {
+      log.querySelectorAll(".line").forEach((el) => el.classList.remove("cursor"));
+      div.classList.add("show", "cursor");
+    }, l.delay);
+  });
+  const q = $("#quote"); q.innerHTML = "";
+  [...QUOTE].forEach((ch, i) => {
+    const s = document.createElement("span");
+    s.className = "ch"; s.dataset.i = i; s.textContent = ch; q.appendChild(s);
+  });
+  t(() => $("#grenze").classList.add("draw"), 2600);
+  t(() => $$("#quote .ch").forEach((s, i) => setTimeout(() => s.classList.add("in"), i * 90)), 3400);
+  t(() => $$("#quote .ch").forEach((s) => {
+    if (LIMIT_INDEX.has(+s.dataset.i))
+      setTimeout(() => s.classList.add("limit"), +s.dataset.i * 45);
+  }), 5800);
+  t(() => $("#attrib").classList.add("show"), 6400);
+  t(enterDesktop, 8600);
+}
+
+function enterDesktop() {
+  bootTimers.forEach(clearTimeout); bootTimers = [];
+  $("#boot").classList.add("done");
+  $("#desktop").classList.add("on");
+  openWin("win-about"); // 默认打开"关于我"
+}
+$("#skip").addEventListener("click", (e) => { e.stopPropagation(); enterDesktop(); });
+playBoot();
+
+/* ================================================================
+   Part 2 · 窗口系统：打开 / 关闭 / 聚焦 / 拖拽
+   ================================================================ */
+let topZ = 10;
+
+function focusWin(w) {
+  $$(".window").forEach((x) => x.classList.remove("focus"));
+  w.classList.add("focus");
+  w.style.zIndex = ++topZ;
+}
+function openWin(id) {
+  const w = document.getElementById(id);
+  w.classList.add("show"); focusWin(w);
+  $$(`.dockicon[data-win="${id}"]`).forEach((d) => d.classList.add("open"));
+}
+function closeWin(id) {
+  document.getElementById(id).classList.remove("show");
+  $$(`.dockicon[data-win="${id}"]`).forEach((d) => d.classList.remove("open"));
+}
+
+$$(".dockicon").forEach((icon) => {
+  icon.addEventListener("click", () => {
+    const id = icon.dataset.win;
+    const w = document.getElementById(id);
+    w.classList.contains("show") ? focusWin(w) : openWin(id);
+  });
+});
+$$(".window").forEach((w) => {
+  w.addEventListener("pointerdown", () => focusWin(w));
+  w.querySelector(".dot.close").addEventListener("click", () => closeWin(w.id));
+  w.querySelector(".dot.mini").addEventListener("click", () => closeWin(w.id)); // v0.2 最小化=关闭
+});
+
+/* 拖拽：pointer events，鼠标和触屏都支持 */
+$$(".titlebar").forEach((bar) => {
+  bar.addEventListener("pointerdown", (e) => {
+    if (e.target.classList.contains("dot")) return;
+    const w = bar.parentElement;
+    const startX = e.clientX, startY = e.clientY;
+    const rect = w.getBoundingClientRect();
+    focusWin(w);
+    function move(ev) {
+      let nx = rect.left + (ev.clientX - startX);
+      let ny = rect.top + (ev.clientY - startY);
+      nx = Math.max(-rect.width + 80, Math.min(nx, innerWidth - 80));
+      ny = Math.max(40, Math.min(ny, innerHeight - 60));
+      w.style.left = nx + "px"; w.style.top = ny + "px";
+    }
+    function up() {
+      removeEventListener("pointermove", move);
+      removeEventListener("pointerup", up);
+    }
+    addEventListener("pointermove", move);
+    addEventListener("pointerup", up);
+    e.preventDefault();
+  });
+});
+
+/* ================================================================
+   Part 3 · 菜单栏时钟 + 重新开机彩蛋
+   ================================================================ */
+function tick() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  $("#clock").textContent = `${pad(d.getMonth()+1)}.${pad(d.getDate())}  ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+tick(); setInterval(tick, 10000);
+
+/* 彩蛋：点菜单栏的 ● 重新开机 */
+$("#logo").addEventListener("click", () => {
+  $("#desktop").classList.remove("on");
+  $("#boot").classList.remove("done");
+  $("#grenze").classList.remove("draw");
+  $("#attrib").classList.remove("show");
+  $$(".fade-group").forEach((x) => x.classList.remove("out"));
+  $$(".window").forEach((w) => closeWin(w.id));
+  playBoot();
+});
+
+/* ================================================================
+   Part 4 · 终端
+   ================================================================ */
+const CMDS = {
+  help: `可用命令：<span class="tealtx">about</span> · <span class="tealtx">projects</span> · <span class="tealtx">world</span> · <span class="tealtx">whoami</span> · <span class="tealtx">clear</span>`,
+  about: () => { openWin("win-about"); return "已打开 关于我.txt"; },
+  projects: () => { openWin("win-projects"); return "已打开 项目/"; },
+  whoami: `yiqi — 用语言渲染世界的人`,
+  world: `<span class="foamtx">「凡是能够说的，都能够说清楚；<br>凡是不能说的，就应该保持沉默。」</span><br><span class="muted">—— 《逻辑哲学论》 7</span>`,
+  clear: "CLEAR",
+};
+const termout = $("#termout");
+const terminput = $("#terminput");
+terminput.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter") return;
+  const cmd = terminput.value.trim().toLowerCase();
+  terminput.value = "";
+  if (!cmd) return;
+  const echo = document.createElement("div");
+  echo.innerHTML = `<span class="tealtx">yiqi@world ~ %</span> ${cmd}`;
+  termout.appendChild(echo);
+  let res = CMDS[cmd];
+  if (typeof res === "function") res = res();
+  if (res === "CLEAR") { termout.innerHTML = ""; return; }
+  const out = document.createElement("div");
+  out.innerHTML = res || `zsh: command not found: ${cmd} <span class="muted">（试试 help）</span>`;
+  termout.appendChild(out);
+  termout.parentElement.scrollTop = 99999;
+});
+
+/* ================================================================
+   Part 5 · 项目详情：数据 + 全屏接管
+   文案都是占位初稿，直接改 PROJECTS 里的字段即可
+   ================================================================ */
+const PROJECTS = {
+  mom: {
+    title: "妈妈的小程序",
+    meta: "vibecoding · 微信小程序 · 2026",
+    body: `
+      <h3>起点</h3>
+      <p>（占位：为什么想给妈妈做一个小程序？那个触发的瞬间是什么？）</p>
+      <h3>做了什么</h3>
+      <p>用 AI 辅助开发完成微信小程序，云开发 + 数据库存储，三个 Tab 的结构里，妈妈是主角。</p>
+      <div class="imgph">截图 / 录屏位 · 小程序界面</div>
+      <h3>发生了什么</h3>
+      <p>妈妈真的每天在用。这篇记录后来成了公众号阅读量最高的一篇。</p>
+      <p class="muted">（占位：补一句妈妈的原话，比数据更打动人）</p>`,
+  },
+  vidscout: {
+    title: "VidScout",
+    meta: "工具 · Web · 已上线",
+    body: `
+      <h3>解决什么问题</h3>
+      <p>（占位：做视频时对标拆解的痛点是什么？）</p>
+      <h3>它长什么样</h3>
+      <div class="imgph">截图位 · VidScout 界面</div>
+      <p>在线地址：<a class="plink" href="https://yiqisun25-coder.github.io/vidscout/" target="_blank">yiqisun25-coder.github.io/vidscout</a></p>
+      <h3>我从中学到</h3>
+      <p>（占位：一句话，从内容运营视角看工具开发）</p>`,
+  },
+  debug: {
+    title: "生活Debug日志",
+    meta: "公众号 · 持续更新",
+    body: `
+      <h3>这是什么</h3>
+      <p>一个把生活当程序调试的公众号：AI 工具、内容方法、以及把技术用在温柔地方的记录。</p>
+      <h3>代表作</h3>
+      <p>（占位：贴 2-3 篇代表文章的标题 + 一句话简介 + 数据）</p>
+      <div class="imgph">截图位 · 文章 / 后台数据</div>`,
+  },
+  client: {
+    title: "品牌内容案例",
+    meta: "客户工作 · 整理中",
+    body: `
+      <h3>整理中</h3>
+      <p>餐饮、印刷、文创品牌的内容策略与视觉系统案例，正在获得授权与脱敏处理中。</p>
+      <div class="imgph">案例卡片位 × 3</div>`,
+  },
+};
+
+const detail = $("#detail");
+function openDetail(pid) {
+  const p = PROJECTS[pid];
+  if (!p) return;
+  $("#detail-inner").innerHTML =
+    `<h1>${p.title}</h1><div class="meta">${p.meta}</div>${p.body}`;
+  detail.classList.add("up");
+  detail.scrollTop = 0;
+}
+function closeDetail() { detail.classList.remove("up"); }
+$$(".filerow[data-pid]").forEach((row) =>
+  row.addEventListener("click", () => openDetail(row.dataset.pid)));
+detail.querySelector(".back").addEventListener("click", closeDetail);
+addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
+
+/* ================================================================
+   Part 6 · 氛围：悬浮光点（水中碎光）
+   ================================================================ */
+const fx = $("#fx"), ctx = fx.getContext("2d");
+let parts = [];
+function resizeFx() {
+  fx.width = innerWidth; fx.height = innerHeight;
+  const n = Math.min(70, Math.floor(innerWidth / 22));
+  parts = Array.from({ length: n }, () => ({
+    x: Math.random() * fx.width,
+    y: Math.random() * fx.height,
+    r: 0.6 + Math.random() * 2.2,
+    vy: 0.08 + Math.random() * 0.3,      // 缓慢上浮
+    vx: (Math.random() - 0.5) * 0.12,    // 轻微横漂
+    a: 0.15 + Math.random() * 0.4,
+    tw: Math.random() * Math.PI * 2,     // 闪烁相位
+  }));
+}
+function drawFx() {
+  ctx.clearRect(0, 0, fx.width, fx.height);
+  for (const p of parts) {
+    p.y -= p.vy; p.x += p.vx; p.tw += 0.02;
+    if (p.y < -6) { p.y = fx.height + 6; p.x = Math.random() * fx.width; }
+    const alpha = p.a * (0.6 + 0.4 * Math.sin(p.tw));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(207, 230, 225, ${alpha})`;
+    ctx.fill();
+  }
+  requestAnimationFrame(drawFx);
+}
+resizeFx(); drawFx();
+addEventListener("resize", resizeFx);
+
+/* ================================================================
+   Part 7 · Mascot：点击说话
+   ================================================================ */
+const LINES = [
+  "今天也在用语言渲染世界。",
+  "试试在终端输入 world",
+  "凡是不能说的……可以先拖拽一下窗口。",
+  "沉默，是因为在加载。",
+  "界限之内，一切都好。",
+  "你知道点菜单栏那个 ● 会发生什么吗？",
+];
+let lastLine = -1, bubbleTimer;
+$("#mascot").addEventListener("click", () => {
+  let i;
+  do { i = Math.floor(Math.random() * LINES.length); } while (i === lastLine);
+  lastLine = i;
+  const b = $("#bubble");
+  b.textContent = LINES[i];
+  b.classList.add("say");
+  clearTimeout(bubbleTimer);
+  bubbleTimer = setTimeout(() => b.classList.remove("say"), 3200);
+});
+</script>
+</body>
+</html>
