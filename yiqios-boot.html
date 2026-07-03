@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YiqiOS — Boot</title>
+<style>
+  /* ============================================================
+     YiqiOS 开机动画 · 设计说明
+     概念：语言启动世界。开机日志不是技术术语，而是"加载语言"；
+     一条 teal 界限线（Grenze）横贯屏幕——"界限"被画成了字面意义
+     上的一条线，引言落在线上，最后这条线上移成为 OS 的菜单栏。
+     配色：墨绿黑底 / teal #0FA396 / 雾白
+     字体：等宽体（系统日志） × 宋体（哲学引言）的对撞
+     ============================================================ */
+  :root {
+    --ink: #0A0F0E;        /* 墨绿黑，偏 teal 的深底 */
+    --teal: #0FA396;       /* YiqiOS 主色 */
+    --mist: #E8F5F2;       /* 雾白正文 */
+    --dim:  #5A736E;       /* 灰绿次要文字 */
+    --mono: "JetBrains Mono", "SF Mono", "Cascadia Code", Consolas, monospace;
+    --serif: "Songti SC", "Noto Serif SC", "SimSun", serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: var(--ink);
+    color: var(--mist);
+    font-family: var(--mono);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* ---------- 舞台 ---------- */
+  #stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ---------- Phase 0：启动日志 ---------- */
+  #bootlog {
+    position: absolute;
+    top: clamp(24px, 8vh, 72px);
+    left: clamp(20px, 6vw, 64px);
+    font-size: clamp(11px, 1.4vw, 14px);
+    line-height: 2;
+    color: var(--dim);
+    letter-spacing: 0.04em;
+  }
+  #bootlog .line { opacity: 0; }
+  #bootlog .line.show { opacity: 1; }
+  #bootlog .ok { color: var(--teal); }
+  .cursor::after {
+    content: "▌";
+    color: var(--teal);
+    animation: blink 0.9s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- Phase 1：界限线 ---------- */
+  #grenze {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(72vw, 680px);
+    height: 1px;
+    background: var(--teal);
+    box-shadow: 0 0 12px rgba(15, 163, 150, 0.55);
+    transform: translate(-50%, -50%) scaleX(0);
+    transform-origin: center;
+    transition: transform 1.1s cubic-bezier(0.77, 0, 0.18, 1),
+                top 1s cubic-bezier(0.77, 0, 0.18, 1),
+                width 1s cubic-bezier(0.77, 0, 0.18, 1);
+  }
+  #grenze.draw { transform: translate(-50%, -50%) scaleX(1); }
+  /* 结尾：线上移成为菜单栏 */
+  #grenze.menubar { top: clamp(44px, 7vh, 56px); width: 100vw; }
+
+  /* ---------- Phase 2：引言（逐字动力学） ---------- */
+  #quote {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-100% - 0.5em));
+    font-family: var(--serif);
+    font-size: clamp(22px, 4.4vw, 44px);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  #quote .ch {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(0.9em) scale(1.5);
+    transition: opacity 0.7s ease, filter 0.7s ease,
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.6s ease, text-shadow 0.6s ease;
+  }
+  #quote .ch.in {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+  /* "界限"高亮：teal 扫过 */
+  #quote .ch.limit {
+    color: var(--teal);
+    text-shadow: 0 0 18px rgba(15, 163, 150, 0.6);
+  }
+
+  /* ---------- Phase 3：出处 + 德文原文 ---------- */
+  #attrib {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0.9em);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    line-height: 2;
+  }
+  #attrib.show { opacity: 1; }
+  #attrib .de {
+    font-size: clamp(10px, 1.3vw, 13px);
+    color: var(--dim);
+    letter-spacing: 0.12em;
+    font-style: italic;
+  }
+  #attrib .src {
+    font-size: clamp(10px, 1.2vw, 12px);
+    color: var(--dim);
+    letter-spacing: 0.24em;
+  }
+
+  /* ---------- Phase 4：YiqiOS 登场 ---------- */
+  .fade-group { transition: opacity 1s ease; }
+  .fade-group.out { opacity: 0 !important; }
+  #brand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.4s ease 0.3s;
+  }
+  #brand.show { opacity: 1; }
+  #brand h1 {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: clamp(30px, 6vw, 60px);
+    letter-spacing: 0.06em;
+  }
+  #brand h1 .os { color: var(--teal); }
+  #brand p {
+    margin-top: 1.4em;
+    font-size: clamp(11px, 1.4vw, 14px);
+    color: var(--dim);
+    letter-spacing: 0.3em;
+    animation: breathe 2.8s ease-in-out infinite;
+  }
+  @keyframes breathe { 50% { opacity: 0.35; } }
+
+  /* 菜单栏文字（结尾彩蛋） */
+  #menubar-label {
+    position: absolute;
+    top: clamp(28px, 4.6vh, 38px);
+    left: clamp(20px, 6vw, 64px);
+    font-size: clamp(10px, 1.2vw, 12px);
+    color: var(--dim);
+    letter-spacing: 0.2em;
+    opacity: 0;
+    transition: opacity 1s ease 0.8s;
+  }
+  #menubar-label.show { opacity: 1; }
+  #menubar-label b { color: var(--teal); font-weight: 500; }
+
+  /* 竖屏（小红书录屏）优化：引言换行为两行 */
+  @media (max-aspect-ratio: 3/4) {
+    #quote { white-space: normal; width: 86vw; text-align: center; font-size: clamp(24px, 7.5vw, 40px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01s !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bootlog" class="fade-group"></div>
+  <div id="grenze"></div>
+  <div id="quote" class="fade-group"></div>
+  <div id="attrib" class="fade-group">
+    <div class="de">Die Grenzen meiner Sprache bedeuten die Grenzen meiner Welt.</div>
+    <div class="src">维特根斯坦 · 《逻辑哲学论》 5.6</div>
+  </div>
+  <div id="brand">
+    <h1>Yiqi<span class="os">OS</span></h1>
+    <p>点击任意处 · 重新启动</p>
+  </div>
+  <div id="menubar-label"><b>●</b>&nbsp; YiqiOS · 语言已加载</div>
+</div>
+
+<script>
+/* ============================================================
+   时间线：全部用 setTimeout 串联，方便逐段调节奏。
+   总时长约 9.5 秒，录屏刚好卡小红书前 10 秒黄金区。
+   ============================================================ */
+const $ = (s) => document.querySelector(s);
+
+const BOOT_LINES = [
+  { text: "> yiqios v0.1 · booting", delay: 300 },
+  { text: "> loading /philosophy/wittgenstein.txt", delay: 900 },
+  { text: "> rendering world from language … <span class='ok'>ok</span>", delay: 1600 },
+];
+
+const QUOTE = "我的语言的界限，意味着我的世界的界限。";
+// "界限"两次出现的字符下标（用于 teal 高亮）
+const LIMIT_INDEX = new Set([5, 6, 17, 18]);
+
+function buildBootlog() {
+  const log = $("#bootlog");
+  log.innerHTML = "";
+  BOOT_LINES.forEach((l) => {
+    const div = document.createElement("div");
+    div.className = "line";
+    div.innerHTML = l.text;
+    log.appendChild(div);
+    setTimeout(() => {
+      log.querySelectorAll(".line").forEach((el) => el.classList.remove("cursor"));
+      div.classList.add("show", "cursor");
+    }, l.delay);
+  });
+}
+
+function buildQuote() {
+  const q = $("#quote");
+  q.innerHTML = "";
+  [...QUOTE].forEach((ch, i) => {
+    const span = document.createElement("span");
+    span.className = "ch";
+    span.dataset.i = i;
+    span.textContent = ch;
+    q.appendChild(span);
+  });
+}
+
+function play() {
+  // 重置
+  ["#bootlog", "#quote", "#attrib"].forEach((s) => $(s).classList.remove("out"));
+  $("#grenze").classList.remove("draw", "menubar");
+  $("#attrib").classList.remove("show");
+  $("#brand").classList.remove("show");
+  $("#menubar-label").classList.remove("show");
+  buildBootlog();
+  buildQuote();
+
+  // Phase 1 · 2.6s：界限线画出
+  setTimeout(() => $("#grenze").classList.add("draw"), 2600);
+
+  // Phase 2 · 3.4s起：逐字浮出（每字 90ms 交错）
+  setTimeout(() => {
+    document.querySelectorAll("#quote .ch").forEach((span, i) => {
+      setTimeout(() => span.classList.add("in"), i * 90);
+    });
+  }, 3400);
+
+  // Phase 3 · 5.8s：高亮"界限" → 6.4s 出处浮现
+  setTimeout(() => {
+    document.querySelectorAll("#quote .ch").forEach((span) => {
+      if (LIMIT_INDEX.has(Number(span.dataset.i)))
+        setTimeout(() => span.classList.add("limit"),
+                   Number(span.dataset.i) * 45);
+    });
+  }, 5800);
+  setTimeout(() => $("#attrib").classList.add("show"), 6400);
+
+  // Phase 4 · 8.2s：引言谢幕，界限线上移成菜单栏，YiqiOS 登场
+  setTimeout(() => {
+    ["#bootlog", "#quote", "#attrib"].forEach((s) => $(s).classList.add("out"));
+    $("#grenze").classList.add("menubar");
+    $("#brand").classList.add("show");
+    $("#menubar-label").classList.add("show");
+  }, 8200);
+}
+
+play();
+document.body.addEventListener("click", play); // 点击重播，方便录屏
+</script>
+</body>
+</html>
