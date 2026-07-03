@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="YiqiOS — 孙一祺的个人操作系统。内容创作者 × vibecoder,用语言渲染世界。">
 <title>YiqiOS</title>
 <style>
 /* ================================================================
-   YiqiOS · 完整原型 v0.2
+   YiqiOS · 完整原型 v0.3
    概念：语言启动世界。开机后，那条"界限线"成为菜单栏，
    整个操作系统生活在一片深水之中。
    配色：冰川水参考图（深水黑 / 冰川乳蓝 / 浪花白）
@@ -290,11 +291,64 @@ body {
 }
 #bubble.say { opacity: 1; transform: none; }
 
+/* ================= 五行指示器 ================= */
+#menubar .right { display: flex; gap: 18px; align-items: center; }
+#wuxing { color: var(--dim); letter-spacing: .1em; }
+#wuxing b { color: var(--teal); font-weight: 500; }
+
+/* ================= 窗口内链接 ================= */
+.winbody a { color: var(--teal); text-decoration: none; border-bottom: 1px solid var(--line); }
+.winbody a:hover { border-bottom-color: var(--teal); }
+
+/* ================= 玄学.exe ================= */
+.pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0 18px; text-align: center; }
+.pillar { border: 1px dashed var(--line); border-radius: 8px; padding: 10px 4px; }
+.pillar .plabel { font-size: 10px; color: var(--dim); letter-spacing: .2em; margin-bottom: 6px; }
+.pillar .pchar { font-family: var(--serif); font-size: 18px; color: var(--foam); line-height: 1.6; }
+.barrow { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+.barrow .bk { width: 2.5em; color: var(--dim); font-size: 11px; }
+.bar { flex: 1; height: 6px; background: rgba(143,193,187,0.08); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--teal), var(--foam)); border-radius: 3px; transition: width 1s cubic-bezier(.22,1,.36,1); }
+.bar-v { width: 3em; text-align: right; color: var(--dim); font-size: 10px; }
+.codeline { margin-top: 14px; color: var(--teal); font-size: 11.5px; opacity: .85; }
+
+/* ================= Debug 模式（按 g） ================= */
+#gridoverlay { position: fixed; inset: 0; z-index: 90; pointer-events: none; display: none; }
+#gridoverlay .cols { height: 100%; max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; padding: 0 24px; }
+#gridoverlay .cols i { background: rgba(232,57,14,0.05); border-left: 1px solid rgba(232,57,14,0.18); border-right: 1px solid rgba(232,57,14,0.18); }
+#scanline { position: fixed; left: 0; right: 0; top: -2px; height: 2px; z-index: 91; pointer-events: none; display: none;
+  background: linear-gradient(90deg, transparent, #E8390E, transparent);
+  box-shadow: 0 0 12px rgba(232,57,14,0.6); animation: scan 3.5s linear infinite; }
+@keyframes scan { to { transform: translateY(100vh); } }
+#tokens { position: fixed; right: 20px; top: 56px; z-index: 92; display: none;
+  background: var(--panel); backdrop-filter: blur(14px);
+  border: 1px solid rgba(232,57,14,0.4); border-radius: 10px; padding: 14px 16px;
+  font-size: 10.5px; line-height: 2.1; letter-spacing: .08em; color: var(--dim); }
+#tokens .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: -1px; border: 1px solid var(--line); }
+body.debug #gridoverlay, body.debug #scanline, body.debug #tokens { display: block; }
+body.debug .window, body.debug .dockicon, body.debug #menubar, body.debug #mascot { outline: 1px dashed rgba(232,57,14,0.5); outline-offset: 2px; }
+
+/* ================= 光标圆点 ================= */
+#cursordot { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  #cursordot { display: block; position: fixed; left: -20px; top: -20px; z-index: 99;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--teal);
+    pointer-events: none; transform: translate(-50%, -50%);
+    transition: width .25s ease, height .25s ease, opacity .3s;
+    box-shadow: 0 0 10px rgba(143,193,187,0.6); opacity: .85; mix-blend-mode: screen; }
+  #cursordot.big { width: 26px; height: 26px; opacity: .35; }
+}
+
+/* ================= 挂机睡觉 ================= */
+#mascot.sleep { animation-play-state: paused; filter: saturate(.6) brightness(.8); }
+
 /* 移动端：窗口接近全屏 */
 @media (max-width: 640px) {
   .window { left: 4vw !important; top: 60px !important; width: 92vw !important; max-height: 68vh; }
-  .dockicon { width: 46px; height: 46px; }
-  #wm { display: none; }
+  #dock { gap: 6px; padding: 8px 10px; }
+  .dockicon { width: 42px; height: 42px; }
+  #wm, #wuxing { display: none; }
+  #tokens { display: none !important; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition-duration: .01s !important; animation: none !important; }
@@ -337,7 +391,7 @@ body {
 
   <div id="menubar">
     <div class="left"><b id="logo">●</b><span>YiqiOS · 语言已加载</span></div>
-    <div id="clock">--:--</div>
+    <div class="right"><span id="wuxing"></span><div id="clock">--:--</div></div>
   </div>
 
   <div id="wm">我的语言的界限，意味着我的世界的界限</div>
@@ -382,9 +436,56 @@ body {
     <div class="winbody">
       <div class="contactrow"><span class="k">小红书</span><span class="v">@（待填）</span></div>
       <div class="contactrow"><span class="k">公众号</span><span class="v">生活Debug日志</span></div>
-      <div class="contactrow"><span class="k">GitHub</span><span class="v">yiqisun25-coder</span></div>
-      <div class="contactrow"><span class="k">Email</span><span class="v">（待填）</span></div>
+      <div class="contactrow"><span class="k">GitHub</span><span class="v"><a href="https://github.com/yiqisun25-coder" target="_blank" rel="noopener">yiqisun25-coder</a></span></div>
+      <div class="contactrow"><span class="k">Email</span><span class="v"><a href="mailto:yiqisun25@gmail.com">yiqisun25@gmail.com</a></span></div>
       <p class="muted" style="margin-top:12px">合作 / 交换灵感 / 只是打个招呼，都欢迎。</p>
+    </div>
+  </div>
+
+  <!-- 玄学.exe -->
+  <div class="window" id="win-xuanxue" style="top: 10%; left: 30%; width: 400px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>玄学.exe</span></div>
+    <div class="winbody">
+      <h2>系统配置 · 命盘</h2>
+      <div class="tagline">// 把一张八字命盘,按数据表的方式渲染</div>
+      <div class="pillars">
+        <div class="pillar"><div class="plabel">年柱</div><div class="pchar">○<br>○</div></div>
+        <div class="pillar"><div class="plabel">月柱</div><div class="pchar">○<br>○</div></div>
+        <div class="pillar"><div class="plabel">日柱</div><div class="pchar">○<br>○</div></div>
+        <div class="pillar"><div class="plabel">时柱</div><div class="pchar">○<br>○</div></div>
+      </div>
+      <div class="bars">
+        <div class="barrow"><span class="bk">木</span><div class="bar"><i data-v="30"></i></div><span class="bar-v">30%</span></div>
+        <div class="barrow"><span class="bk">火</span><div class="bar"><i data-v="25"></i></div><span class="bar-v">25%</span></div>
+        <div class="barrow"><span class="bk">土</span><div class="bar"><i data-v="10"></i></div><span class="bar-v">10%</span></div>
+        <div class="barrow"><span class="bk">金</span><div class="bar"><i data-v="15"></i></div><span class="bar-v">15%</span></div>
+        <div class="barrow"><span class="bk">水</span><div class="bar"><i data-v="20"></i></div><span class="bar-v">20%</span></div>
+      </div>
+      <div class="codeline">// 伤官生财:靠才华和表达换钱的系统配置</div>
+      <p class="muted" style="margin-top:10px">· 四柱与占比为演示值,命主数据待录入</p>
+    </div>
+  </div>
+
+  <!-- tv.guide -->
+  <div class="window" id="win-tv" style="top: 20%; left: 44%; width: 420px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span id="tv-title">tv.guide — 正在追</span></div>
+    <div class="winbody">
+      <div class="filerow tvrow" data-quote="工作的我,不认识下班的我。"><span class="fname">剧名待填 01</span><span class="fdesc">一句话观后感（待填）</span><span class="ftag">正在追</span></div>
+      <div class="filerow tvrow" data-quote="有些台词,是替我说的。"><span class="fname">剧名待填 02</span><span class="fdesc">一句话观后感（待填）</span><span class="ftag">N 刷</span></div>
+      <div class="filerow tvrow" data-quote="结局不重要,过程有我。"><span class="fname">剧名待填 03</span><span class="fdesc">一句话观后感（待填）</span><span class="ftag">已看完</span></div>
+      <p class="muted" style="margin-top:14px">· 双击某一行,标题栏会闪一句台词</p>
+    </div>
+  </div>
+
+  <!-- changelog -->
+  <div class="window" id="win-log" style="top: 34%; left: 12%; width: 440px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>changelog — 人生剧集</span></div>
+    <div class="winbody">
+      <div class="filerow"><span class="fname">S2026E07</span><span class="fdesc">网站接入 GitHub,进入版本管理时代</span><span class="ftag">now</span></div>
+      <div class="filerow"><span class="fname">S2026E06</span><span class="fdesc">YiqiOS v0.2:深水世界 · 开机序列 · 窗口系统</span><span class="ftag">发布</span></div>
+      <div class="filerow"><span class="fname">S2026E05</span><span class="fdesc">VidScout 上线 GitHub Pages</span><span class="ftag">工具</span></div>
+      <div class="filerow"><span class="fname">S2026E04</span><span class="fdesc">给妈妈的小程序上线,那篇记录被读了 1,853 次</span><span class="ftag">温柔</span></div>
+      <p class="muted" style="margin-top:14px">"Don't think, look." — 别想,去看。</p>
     </div>
   </div>
 
@@ -392,6 +493,9 @@ body {
     <div class="dockicon" data-win="win-about"><span class="glyph">☰</span><span class="lbl">关于</span></div>
     <div class="dockicon" data-win="win-projects"><span class="glyph">▤</span><span class="lbl">项目</span></div>
     <div class="dockicon" data-win="win-terminal"><span class="glyph">›_</span><span class="lbl">终端</span></div>
+    <div class="dockicon" data-win="win-xuanxue"><span class="glyph">☯</span><span class="lbl">玄学</span></div>
+    <div class="dockicon" data-win="win-tv"><span class="glyph">▶</span><span class="lbl">追剧</span></div>
+    <div class="dockicon" data-win="win-log"><span class="glyph">✎</span><span class="lbl">日志</span></div>
     <div class="dockicon" data-win="win-contact"><span class="glyph">✉</span><span class="lbl">联系</span></div>
   </div>
 </div>
@@ -401,6 +505,20 @@ body {
   <button class="back">← 返回桌面 esc</button>
   <div class="inner" id="detail-inner"></div>
 </div>
+
+<!-- ================= Debug 模式覆盖层 ================= -->
+<div id="gridoverlay"><div class="cols"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+<div id="scanline"></div>
+<div id="tokens">
+  DESIGN TOKENS<br>
+  <span class="sw" style="background:#060D0F"></span>--ink&nbsp;&nbsp;#060D0F<br>
+  <span class="sw" style="background:#8FC1BB"></span>--teal&nbsp;#8FC1BB<br>
+  <span class="sw" style="background:#CFE6E1"></span>--foam&nbsp;#CFE6E1<br>
+  <span class="sw" style="background:#DCEBE8"></span>--mist&nbsp;#DCEBE8<br>
+  <span class="sw" style="background:#E8390E"></span>--error #E8390E<br>
+  grid 12col · max 1280 · mono × serif
+</div>
+<div id="cursordot"></div>
 
 <script>
 /* ================================================================
@@ -468,6 +586,8 @@ function openWin(id) {
   const w = document.getElementById(id);
   w.classList.add("show"); focusWin(w);
   $$(`.dockicon[data-win="${id}"]`).forEach((d) => d.classList.add("open"));
+  if (id === "win-xuanxue")
+    setTimeout(() => $$("#win-xuanxue .bar i").forEach((b) => (b.style.width = b.dataset.v + "%")), 60);
 }
 function closeWin(id) {
   document.getElementById(id).classList.remove("show");
@@ -537,10 +657,17 @@ $("#logo").addEventListener("click", () => {
    Part 4 · 终端
    ================================================================ */
 const CMDS = {
-  help: `可用命令：<span class="tealtx">about</span> · <span class="tealtx">projects</span> · <span class="tealtx">world</span> · <span class="tealtx">whoami</span> · <span class="tealtx">clear</span>`,
+  help: `可用命令：<span class="tealtx">about</span> · <span class="tealtx">projects</span> · <span class="tealtx">xuanxue</span> · <span class="tealtx">tv</span> · <span class="tealtx">changelog</span> · <span class="tealtx">contact</span> · <span class="tealtx">world</span> · <span class="tealtx">whoami</span> · <span class="tealtx">date</span> · <span class="tealtx">debug</span> · <span class="tealtx">clear</span>`,
   about: () => { openWin("win-about"); return "已打开 关于我.txt"; },
   projects: () => { openWin("win-projects"); return "已打开 项目/"; },
+  xuanxue: () => { openWin("win-xuanxue"); return "已打开 玄学.exe"; },
+  tv: () => { openWin("win-tv"); return "已打开 tv.guide"; },
+  changelog: () => { openWin("win-log"); return "已打开 changelog"; },
+  contact: () => { openWin("win-contact"); return "已打开 联系.card"; },
   whoami: `yiqi — 用语言渲染世界的人`,
+  date: () => $("#wuxing").textContent || "日期加载中",
+  debug: () => { toggleDebug(); return document.body.classList.contains("debug") ? "debug 模式:on（也可以直接按 g）" : "debug 模式:off"; },
+  sudo: `权限不足:本系统唯一的超级管理员,是我妈。`,
   world: `<span class="foamtx">「凡是能够说的，都能够说清楚；<br>凡是不能说的，就应该保持沉默。」</span><br><span class="muted">—— 《逻辑哲学论》 7</span>`,
   clear: "CLEAR",
 };
@@ -672,6 +799,8 @@ const LINES = [
   "沉默，是因为在加载。",
   "界限之内，一切都好。",
   "你知道点菜单栏那个 ● 会发生什么吗？",
+  "按一下 g，看看这个世界的骨架。",
+  "双击 tv.guide 里的剧,有台词。",
 ];
 let lastLine = -1, bubbleTimer;
 $("#mascot").addEventListener("click", () => {
@@ -684,6 +813,99 @@ $("#mascot").addEventListener("click", () => {
   clearTimeout(bubbleTimer);
   bubbleTimer = setTimeout(() => b.classList.remove("say"), 3200);
 });
+
+/* ================================================================
+   Part 8 · 菜单栏五行指示器
+   以 1949-10-01（甲子日）为锚点推算今日日柱干支
+   ================================================================ */
+const STEMS = "甲乙丙丁戊己庚辛壬癸";
+const BRANCHES = "子丑寅卯辰巳午未申酉戌亥";
+const STEM_ELEM = ["木","木","火","火","土","土","金","金","水","水"];
+const ELEM_YI = { 木: "宜开新坑", 火: "宜发布", 土: "宜整理素材", 金: "宜删旧代码", 水: "宜写作" };
+function renderWuxing() {
+  const anchor = Date.UTC(1949, 9, 1);
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const d = (((Math.round((today - anchor) / 86400000)) % 60) + 60) % 60;
+  const stem = STEMS[d % 10], branch = BRANCHES[d % 12], elem = STEM_ELEM[d % 10];
+  $("#wuxing").innerHTML = `今日 <b>${stem}${branch}</b> · ${elem} · ${ELEM_YI[elem]}`;
+}
+renderWuxing();
+
+/* ================================================================
+   Part 9 · Debug 模式（签名交互）：按 g 显示世界的骨架
+   ================================================================ */
+let consoleEgged = false;
+function toggleDebug() {
+  const on = document.body.classList.toggle("debug");
+  if (on && !consoleEgged) {
+    consoleEgged = true;
+    console.log(
+      "%cYiqiOS%c\n你都打开控制台了,我们应该聊聊 → yiqisun25@gmail.com\n\"Don't think, look.\" — 别想,去看。",
+      "font-size:22px;color:#8FC1BB;font-weight:bold", "font-size:12px;color:#DCEBE8"
+    );
+  }
+}
+addEventListener("keydown", (e) => {
+  if (e.key === "g" && !e.metaKey && !e.ctrlKey && !e.altKey &&
+      e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") toggleDebug();
+});
+
+/* ================================================================
+   Part 10 · tv.guide：双击闪台词
+   ================================================================ */
+const tvTitle = $("#tv-title");
+const TV_TITLE_DEFAULT = tvTitle.textContent;
+let tvTimer;
+$$(".tvrow").forEach((row) => {
+  row.addEventListener("dblclick", () => {
+    tvTitle.textContent = `“${row.dataset.quote}”`;
+    clearTimeout(tvTimer);
+    tvTimer = setTimeout(() => (tvTitle.textContent = TV_TITLE_DEFAULT), 2600);
+  });
+});
+
+/* ================================================================
+   Part 11 · 挂机睡觉：60 秒无操作,小人睡着,动一下鼠标惊醒
+   ================================================================ */
+let idleTimer, sleeping = false;
+function goSleep() {
+  sleeping = true;
+  $("#mascot").classList.add("sleep");
+  const b = $("#bubble");
+  b.textContent = "zZ…";
+  clearTimeout(bubbleTimer);
+  b.classList.add("say");
+}
+function wake() {
+  if (sleeping) {
+    sleeping = false;
+    $("#mascot").classList.remove("sleep");
+    const b = $("#bubble");
+    b.textContent = "!";
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(() => b.classList.remove("say"), 900);
+  }
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(goSleep, 60000);
+}
+["pointermove", "pointerdown", "keydown"].forEach((ev) => addEventListener(ev, wake, { passive: true }));
+wake();
+
+/* ================================================================
+   Part 12 · 光标圆点：蓝绿小光点跟随,悬停可点元素时膨胀
+   ================================================================ */
+const dot = $("#cursordot");
+if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  addEventListener("pointermove", (e) => {
+    dot.style.left = e.clientX + "px";
+    dot.style.top = e.clientY + "px";
+  }, { passive: true });
+  const HOT = "a, button, input, .dockicon, .filerow, .dot, #mascot, #logo, .back";
+  addEventListener("pointerover", (e) => {
+    dot.classList.toggle("big", !!(e.target.closest && e.target.closest(HOT)));
+  }, { passive: true });
+}
 </script>
 </body>
 </html>
