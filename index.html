@@ -155,6 +155,8 @@ body {
   content: ""; position: absolute; bottom: -7px;
   width: 4px; height: 4px; border-radius: 50%; background: var(--teal);
 }
+/* Dock 分区线:左边正事,右边玩具 */
+.dockdiv { width: 1px; align-self: stretch; margin: 4px 6px; background: var(--line); }
 
 /* ================= 窗口 ================= */
 .window {
@@ -345,8 +347,13 @@ body.debug .window, body.debug .dockicon, body.debug #menubar, body.debug #masco
 /* 移动端：窗口接近全屏 */
 @media (max-width: 640px) {
   .window { left: 4vw !important; top: 60px !important; width: 92vw !important; max-height: 68vh; }
-  #dock { gap: 6px; padding: 8px 10px; }
-  .dockicon { width: 42px; height: 42px; }
+  #dock { gap: 4px; padding: 8px 8px; max-width: 96vw; }
+  .dockicon { width: 36px; height: 36px; border-radius: 10px; }
+  .dockicon .glyph { font-size: 14px; }
+  .dockicon .lbl { font-size: 7px; }
+  .dockdiv { margin: 4px 2px; }
+  #mascot { width: 56px; bottom: 92px; right: 18px; }
+  #bubble { bottom: 158px; right: 14px; max-width: 180px; }
   #wm, #wuxing { display: none; }
   #tokens { display: none !important; }
 }
@@ -431,7 +438,7 @@ body.debug .window, body.debug .dockicon, body.debug #menubar, body.debug #masco
   </div>
 
   <!-- 联系 -->
-  <div class="window" id="win-contact" style="top: 24%; left: 55%; width: 340px;">
+  <div class="window" id="win-contact" style="top: 54%; left: 63%; width: 340px;">
     <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>联系.card</span></div>
     <div class="winbody">
       <div class="contactrow"><span class="k">小红书</span><span class="v">@Film:)</span></div>
@@ -443,7 +450,7 @@ body.debug .window, body.debug .dockicon, body.debug #menubar, body.debug #masco
   </div>
 
   <!-- 玄学.exe -->
-  <div class="window" id="win-xuanxue" style="top: 10%; left: 30%; width: 400px;">
+  <div class="window" id="win-xuanxue" style="top: 8%; left: 28%; width: 400px;">
     <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>玄学.exe</span></div>
     <div class="winbody">
       <h2>系统配置 · 命盘</h2>
@@ -467,7 +474,7 @@ body.debug .window, body.debug .dockicon, body.debug #menubar, body.debug #masco
   </div>
 
   <!-- tv.guide -->
-  <div class="window" id="win-tv" style="top: 20%; left: 44%; width: 420px;">
+  <div class="window" id="win-tv" style="top: 22%; left: 46%; width: 420px;">
     <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span id="tv-title">tv.guide — 正在追</span></div>
     <div class="winbody">
       <div class="filerow tvrow" data-quote="Anything I want to do, I have to do now."><span class="fname">绝望写手 Hacks</span><span class="fdesc">我创作道路上的《士兵突击》</span><span class="ftag">精神主线</span></div>
@@ -489,14 +496,30 @@ body.debug .window, body.debug .dockicon, body.debug #menubar, body.debug #masco
     </div>
   </div>
 
+  <!-- 合作.md -->
+  <div class="window" id="win-hezuo" style="top: 30%; left: 58%; width: 380px;">
+    <div class="titlebar"><div class="dots"><div class="dot close"></div><div class="dot mini"></div></div><span>合作.md</span></div>
+    <div class="winbody">
+      <h2>正在接的活</h2>
+      <div class="tagline">// freelancer 模式:on</div>
+      <div class="filerow"><span class="fname">视频剪辑</span><span class="fdesc">短视频成片:节奏、字幕、调色,从素材到出片</span><span class="ftag">主接</span></div>
+      <div class="filerow"><span class="fname">AI 内容工作流</span><span class="fdesc">搭建 / 代跑:从选题、脚本到成片的流水线</span><span class="ftag">主接</span></div>
+      <div class="filerow"><span class="fname">vibecoding 小工具</span><span class="fdesc">网页 / 小程序定制——比如你正在逛的这个网站</span><span class="ftag">也接</span></div>
+      <p style="margin-top:14px">流程:私信或邮件说清需求 → 沟通报价 → 开工。</p>
+      <p class="muted">小红书 @Film:) · <a href="mailto:yiqisun25@gmail.com">yiqisun25@gmail.com</a></p>
+    </div>
+  </div>
+
   <div id="dock">
     <div class="dockicon" data-win="win-about"><span class="glyph">☰</span><span class="lbl">关于</span></div>
     <div class="dockicon" data-win="win-projects"><span class="glyph">▤</span><span class="lbl">项目</span></div>
+    <div class="dockicon" data-win="win-hezuo"><span class="glyph">✦</span><span class="lbl">合作</span></div>
+    <div class="dockicon" data-win="win-contact"><span class="glyph">✉</span><span class="lbl">联系</span></div>
+    <div class="dockdiv"></div>
     <div class="dockicon" data-win="win-terminal"><span class="glyph">›_</span><span class="lbl">终端</span></div>
     <div class="dockicon" data-win="win-xuanxue"><span class="glyph">☯</span><span class="lbl">玄学</span></div>
     <div class="dockicon" data-win="win-tv"><span class="glyph">▶</span><span class="lbl">追剧</span></div>
     <div class="dockicon" data-win="win-log"><span class="glyph">✎</span><span class="lbl">日志</span></div>
-    <div class="dockicon" data-win="win-contact"><span class="glyph">✉</span><span class="lbl">联系</span></div>
   </div>
 </div>
 
@@ -657,9 +680,11 @@ $("#logo").addEventListener("click", () => {
    Part 4 · 终端
    ================================================================ */
 const CMDS = {
-  help: `可用命令：<span class="tealtx">about</span> · <span class="tealtx">projects</span> · <span class="tealtx">xuanxue</span> · <span class="tealtx">tv</span> · <span class="tealtx">changelog</span> · <span class="tealtx">contact</span> · <span class="tealtx">world</span> · <span class="tealtx">whoami</span> · <span class="tealtx">date</span> · <span class="tealtx">debug</span> · <span class="tealtx">clear</span>`,
+  help: `可用命令：<span class="tealtx">about</span> · <span class="tealtx">projects</span> · <span class="tealtx">hezuo</span> · <span class="tealtx">contact</span> · <span class="tealtx">xuanxue</span> · <span class="tealtx">tv</span> · <span class="tealtx">changelog</span> · <span class="tealtx">world</span> · <span class="tealtx">whoami</span> · <span class="tealtx">date</span> · <span class="tealtx">debug</span> · <span class="tealtx">clear</span>`,
   about: () => { openWin("win-about"); return "已打开 关于我.txt"; },
   projects: () => { openWin("win-projects"); return "已打开 项目/"; },
+  hezuo: () => { openWin("win-hezuo"); return "已打开 合作.md"; },
+  hire: () => { openWin("win-hezuo"); return "已打开 合作.md"; },
   xuanxue: () => { openWin("win-xuanxue"); return "已打开 玄学.exe"; },
   tv: () => { openWin("win-tv"); return "已打开 tv.guide"; },
   changelog: () => { openWin("win-log"); return "已打开 changelog"; },
