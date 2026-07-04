@@ -36,7 +36,7 @@
 
   <!-- 页眉:mono 小字 + 系统圆点 -->
   <circle cx="90" cy="96" r="6" fill="#8FC1BB"/>
-  <text x="112" y="103" font-family="JetBrains Mono, Consolas, monospace" font-size="22" letter-spacing="2" fill="#4A6462">YiqiOS · 生活Debug日志</text>
+  <text x="112" y="103" font-family="JetBrains Mono, Consolas, monospace" font-size="22" letter-spacing="2" fill="#4A6462">生活Debug日志</text>
 
   <!-- 顶部细线(菜单栏/开机线意象) -->
   <rect x="90" y="150" width="900" height="1" fill="url(#hairline)"/>
@@ -44,6 +44,6 @@
   <!-- 正文由使用者自行填入,安全区:x 90-990 / y 216-1224(见设计规范) -->
 
   <!-- 页脚水印 -->
-  <text x="90" y="1310" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="3" fill="#4A6462">孙祎琦 · @Film:)</text>
+  <text x="90" y="1310" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="3" fill="#4A6462">@Film:)</text>
   <rect x="900" y="1298" width="90" height="1" fill="#4A6462" opacity="0.4"/>
 </svg>
