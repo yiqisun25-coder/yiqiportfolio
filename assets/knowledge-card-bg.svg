@@ -1,0 +1,49 @@
+<svg viewBox="0 0 1080 1440" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#060D0F"/>
+      <stop offset="45%" stop-color="#060D0F"/>
+      <stop offset="100%" stop-color="#0E1F20"/>
+    </linearGradient>
+    <linearGradient id="hairline" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8FC1BB" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#8FC1BB" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#8FC1BB" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.56  0 0 0 0 0.76  0 0 0 0 0.73  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+
+  <!-- 深水渐变底 -->
+  <rect width="1080" height="1440" fill="url(#bg)"/>
+  <rect width="1080" height="1440" filter="url(#grain)"/>
+
+  <!-- 悬浮光点(水中碎光,静态版取固定坐标) -->
+  <g fill="#CFE6E1">
+    <circle cx="120" cy="180" r="2.2" opacity="0.35"/>
+    <circle cx="860" cy="120" r="1.6" opacity="0.28"/>
+    <circle cx="950" cy="300" r="2.6" opacity="0.4"/>
+    <circle cx="80" cy="520" r="1.8" opacity="0.3"/>
+    <circle cx="990" cy="640" r="2.2" opacity="0.32"/>
+    <circle cx="60" cy="900" r="2" opacity="0.28"/>
+    <circle cx="1000" cy="980" r="1.8" opacity="0.3"/>
+    <circle cx="140" cy="1180" r="2.4" opacity="0.35"/>
+    <circle cx="920" cy="1260" r="1.6" opacity="0.26"/>
+    <circle cx="200" cy="60" r="1.4" opacity="0.24"/>
+  </g>
+
+  <!-- 页眉:mono 小字 + 系统圆点 -->
+  <circle cx="90" cy="96" r="6" fill="#8FC1BB"/>
+  <text x="112" y="103" font-family="JetBrains Mono, Consolas, monospace" font-size="22" letter-spacing="2" fill="#4A6462">YiqiOS · 生活Debug日志</text>
+
+  <!-- 顶部细线(菜单栏/开机线意象) -->
+  <rect x="90" y="150" width="900" height="1" fill="url(#hairline)"/>
+
+  <!-- 正文由使用者自行填入,安全区:x 90-990 / y 216-1224(见设计规范) -->
+
+  <!-- 页脚水印 -->
+  <text x="90" y="1310" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="3" fill="#4A6462">孙祎琦 · @Film:)</text>
+  <rect x="900" y="1298" width="90" height="1" fill="#4A6462" opacity="0.4"/>
+</svg>
