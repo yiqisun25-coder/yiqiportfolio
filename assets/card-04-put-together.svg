@@ -1,0 +1,115 @@
+<svg viewBox="0 0 1080 2500" width="1080" height="2500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#060D0F"/>
+      <stop offset="45%" stop-color="#060D0F"/>
+      <stop offset="100%" stop-color="#0E1F20"/>
+    </linearGradient>
+    <linearGradient id="hairline" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8FC1BB" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#8FC1BB" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#8FC1BB" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.56  0 0 0 0 0.76  0 0 0 0 0.73  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="2500" fill="url(#bg)"/>
+  <rect width="1080" height="2500" filter="url(#grain)"/>
+
+  <g fill="#CFE6E1">
+    <circle cx="120" cy="180" r="2.2" opacity="0.35"/>
+    <circle cx="860" cy="120" r="1.6" opacity="0.28"/>
+    <circle cx="950" cy="340" r="2.6" opacity="0.4"/>
+    <circle cx="80" cy="600" r="1.8" opacity="0.3"/>
+    <circle cx="990" cy="900" r="2.2" opacity="0.32"/>
+    <circle cx="60" cy="1200" r="2" opacity="0.28"/>
+    <circle cx="1000" cy="1500" r="1.8" opacity="0.3"/>
+    <circle cx="140" cy="1800" r="2.4" opacity="0.35"/>
+    <circle cx="920" cy="2100" r="1.6" opacity="0.26"/>
+    <circle cx="70" cy="2300" r="2" opacity="0.3"/>
+  </g>
+
+  <!-- 页眉 -->
+  <circle cx="90" cy="96" r="6" fill="#8FC1BB"/>
+  <text x="112" y="103" font-family="JetBrains Mono, Consolas, monospace" font-size="22" letter-spacing="2" fill="#4A6462">生活Debug日志</text>
+  <rect x="90" y="150" width="900" height="1" fill="url(#hairline)"/>
+
+  <!-- 顶部系列标 -->
+  <text x="90" y="246" font-family="JetBrains Mono, Consolas, monospace" font-size="26" fill="#8FC1BB" opacity="0.9">// AI黑话翻译计划 04/04</text>
+
+  <!-- 标题 -->
+  <text x="90" y="380" font-family="Songti SC, Noto Serif SC, serif" font-size="88" font-weight="700" letter-spacing="4" fill="#DCEBE8">串起来用</text>
+  <text x="90" y="438" font-family="Songti SC, Noto Serif SC, serif" font-size="38" letter-spacing="3" fill="#8FC1BB">｜普通人怎么落地</text>
+
+  <!-- 一句话 -->
+  <text font-family="Songti SC, Noto Serif SC, serif" font-size="32" letter-spacing="1" fill="#DCEBE8">
+    <tspan x="90" y="523">你不用自己造轮子。</tspan>
+    <tspan x="90" y="571">在 Claude Code、Codex 这类工具里,</tspan>
+    <tspan x="90" y="619">装上别人写好的 Skill,</tspan>
+    <tspan x="90" y="667">再把它们串成你自己的 Workflow,</tspan>
+    <tspan x="90" y="715">你就拥有了一个专属 Agent。</tspan>
+  </text>
+
+  <text x="90" y="780" font-family="JetBrains Mono, Consolas, monospace" font-size="28" letter-spacing="1" fill="#4A6462">这三样怎么配合：</text>
+
+  <!-- ① -->
+  <text x="90" y="840" font-family="JetBrains Mono, Consolas, monospace" font-size="29" letter-spacing="0.5" fill="#8FC1BB">① 装 Skill = 招"会干活的手艺人"</text>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="26" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="886">别人已经把很多能力打包好开源了</tspan>
+    <tspan x="90" y="924">(比如自动读文档、自动做图、自动抓数据)。</tspan>
+    <tspan x="90" y="962">你在 Claude Code / Codex 里一键装上,</tspan>
+    <tspan x="90" y="1000">就等于免费招了一批熟练工,</tspan>
+    <tspan x="90" y="1038">不用自己从零教。</tspan>
+  </text>
+
+  <!-- ② -->
+  <text x="90" y="1103" font-family="JetBrains Mono, Consolas, monospace" font-size="29" letter-spacing="0.5" fill="#8FC1BB">② 搭 Workflow = 给他们排好班</text>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="26" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="1149">"抓热点 → 筛选选题 → 生成初稿 → 配图"</tspan>
+    <tspan x="90" y="1187">把这些 Skill 按你的实际工作顺序串起来,</tspan>
+    <tspan x="90" y="1225">定好流程,让它自动跑。</tspan>
+  </text>
+
+  <!-- ③ -->
+  <text x="90" y="1290" font-family="JetBrains Mono, Consolas, monospace" font-size="29" letter-spacing="0.5" fill="#8FC1BB">③ 你就成了"店长" = 用 Agent 的方式管它们</text>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="26" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="1336">接下来你只提目标,不用盯每一步。</tspan>
+    <tspan x="90" y="1374">它自己调用装好的 Skill、</tspan>
+    <tspan x="90" y="1412">按搭好的 Workflow 跑,</tspan>
+    <tspan x="90" y="1450">把结果交给你。</tspan>
+  </text>
+
+  <!-- 真实例子:左侧 teal 竖线,呼应引用/日志质感 -->
+  <rect x="90" y="1500" width="4" height="240" fill="#8FC1BB" opacity="0.7"/>
+  <text x="120" y="1520" font-family="JetBrains Mono, Consolas, monospace" font-size="27" letter-spacing="0.5" fill="#CFE6E1">落到我自己身上(真实例子)：</text>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="120" y="1566">我在 Claude Code 里装了几个现成的 Skill,</tspan>
+    <tspan x="120" y="1604">搭了一套"内容生产工作流",</tspan>
+    <tspan x="120" y="1642">现在我只要说一句"帮我出这周的选题",</tspan>
+    <tspan x="120" y="1680">它自己就把活干了——</tspan>
+    <tspan x="120" y="1718">这就是普通人也能拥有的 Agent。</tspan>
+  </text>
+
+  <!-- 记住这条链(全站 thesis 级强调) -->
+  <text font-family="Songti SC, Noto Serif SC, serif" font-size="36" letter-spacing="2" fill="#DCEBE8">
+    <tspan x="90" y="1798">记住这条链:</tspan>
+    <tspan x="90" y="1856">装别人的 Skill →</tspan>
+    <tspan x="90" y="1914">串成自己的 Workflow →</tspan>
+    <tspan x="90" y="1972" fill="#8FC1BB">变成你专属的 Agent。</tspan>
+  </text>
+
+  <!-- 收尾 -->
+  <text font-family="Songti SC, Noto Serif SC, serif" font-size="34" letter-spacing="1" fill="#DCEBE8">
+    <tspan x="90" y="2062">不会写代码也能做,</tspan>
+    <tspan x="90" y="2114">你缺的从来不是技术,</tspan>
+    <tspan x="90" y="2166" fill="#8FC1BB">是这套思路。</tspan>
+  </text>
+
+  <!-- 页脚 -->
+  <rect x="90" y="2360" width="900" height="1" fill="#4A6462" opacity="0.3"/>
+  <text x="90" y="2410" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="3" fill="#4A6462">@Film:)</text>
+  <text x="990" y="2410" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="2" fill="#4A6462">04 / 04</text>
+</svg>

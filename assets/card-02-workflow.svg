@@ -1,0 +1,97 @@
+<svg viewBox="0 0 1080 2050" width="1080" height="2050" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#060D0F"/>
+      <stop offset="45%" stop-color="#060D0F"/>
+      <stop offset="100%" stop-color="#0E1F20"/>
+    </linearGradient>
+    <linearGradient id="hairline" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8FC1BB" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#8FC1BB" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#8FC1BB" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.56  0 0 0 0 0.76  0 0 0 0 0.73  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="2050" fill="url(#bg)"/>
+  <rect width="1080" height="2050" filter="url(#grain)"/>
+
+  <g fill="#CFE6E1">
+    <circle cx="120" cy="180" r="2.2" opacity="0.35"/>
+    <circle cx="860" cy="120" r="1.6" opacity="0.28"/>
+    <circle cx="950" cy="300" r="2.6" opacity="0.4"/>
+    <circle cx="80" cy="520" r="1.8" opacity="0.3"/>
+    <circle cx="990" cy="700" r="2.2" opacity="0.32"/>
+    <circle cx="60" cy="1000" r="2" opacity="0.28"/>
+    <circle cx="1000" cy="1300" r="1.8" opacity="0.3"/>
+    <circle cx="140" cy="1600" r="2.4" opacity="0.35"/>
+    <circle cx="920" cy="1800" r="1.6" opacity="0.26"/>
+  </g>
+
+  <!-- 页眉 -->
+  <circle cx="90" cy="96" r="6" fill="#8FC1BB"/>
+  <text x="112" y="103" font-family="JetBrains Mono, Consolas, monospace" font-size="22" letter-spacing="2" fill="#4A6462">生活Debug日志</text>
+  <rect x="90" y="150" width="900" height="1" fill="url(#hairline)"/>
+
+  <!-- 顶部系列标 -->
+  <text x="90" y="246" font-family="JetBrains Mono, Consolas, monospace" font-size="26" fill="#8FC1BB" opacity="0.9">// AI黑话翻译计划 02/04</text>
+
+  <!-- 关键词标题 -->
+  <text x="90" y="420" font-family="Songti SC, Noto Serif SC, serif" font-size="100" font-weight="700" letter-spacing="1" fill="#DCEBE8">WORKFLOW</text>
+  <text x="90" y="482" font-family="Songti SC, Noto Serif SC, serif" font-size="42" letter-spacing="4" fill="#8FC1BB">｜固定流程</text>
+
+  <!-- 一句话 -->
+  <text font-family="Songti SC, Noto Serif SC, serif" font-size="34" letter-spacing="1" fill="#DCEBE8">
+    <tspan x="90" y="572">Workflow 就是把好几件事,</tspan>
+    <tspan x="90" y="624">按固定顺序串成一条流水线,</tspan>
+    <tspan x="90" y="676">自动一步步跑完。</tspan>
+    <tspan x="90" y="728">它的核心是"顺序写死"——</tspan>
+    <tspan x="90" y="780">第一步做什么、第二步做什么、</tspan>
+    <tspan x="90" y="832">第三步做什么,提前定好,</tspan>
+    <tspan x="90" y="884">每次都照着走,不会变。</tspan>
+  </text>
+
+  <!-- 比喻 -->
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="26" letter-spacing="1" fill="#8FC1BB">
+    <tspan x="90" y="954">【拿餐厅打比方】</tspan>
+    <tspan x="90" y="988">后厨的标准流程(SOP)</tspan>
+  </text>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="1088">一道菜上桌,要经过:</tspan>
+    <tspan x="90" y="1128">洗菜 → 炒菜 → 摆盘。</tspan>
+    <tspan x="90" y="1168">这个顺序是固定的,</tspan>
+    <tspan x="90" y="1208">不管今天是哪个厨师上班,</tspan>
+    <tspan x="90" y="1248">都得这么走,</tspan>
+    <tspan x="90" y="1288">不会有人先摆盘再洗菜。</tspan>
+    <tspan x="90" y="1328">Workflow 就是把多个步骤</tspan>
+    <tspan x="90" y="1368">(甚至多个 Skill)按顺序锁死,</tspan>
+    <tspan x="90" y="1408">让它自动跑完整条链路。</tspan>
+    <tspan x="90" y="1448">适合那些天天重复、步骤不变的事。</tspan>
+  </text>
+
+  <!-- 例子 -->
+  <text x="90" y="1523" font-family="JetBrains Mono, Consolas, monospace" font-size="24" letter-spacing="1" fill="#4A6462">你可能已经在用的 Workflow：</text>
+  <g font-family="JetBrains Mono, Consolas, monospace" font-size="25" fill="#DCEBE8">
+    <circle cx="100" cy="1564" r="3.5" fill="#8FC1BB"/>
+    <text x="120" y="1570">每天早上8点:自动抓取热点 →</text>
+    <text x="120" y="1608">生成摘要 → 发到我邮箱</text>
+    <circle cx="100" cy="1658" r="3.5" fill="#8FC1BB"/>
+    <text x="120" y="1664">有人提交表单:自动归档到表格 →</text>
+    <text x="120" y="1702">再通知到工作群</text>
+  </g>
+
+  <!-- 记住 -->
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" fill="#8FC1BB" opacity="0.9">
+    <tspan x="90" y="1798">// 记住:Workflow 是流水线,</tspan>
+    <tspan x="90" y="1838">// 特点是"顺序写死、自动跑完"。</tspan>
+    <tspan x="90" y="1878">// 它把多个 Skill 串起来。</tspan>
+  </text>
+
+  <!-- 页脚 -->
+  <rect x="90" y="1910" width="900" height="1" fill="#4A6462" opacity="0.3"/>
+  <text x="90" y="1960" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="3" fill="#4A6462">@Film:)</text>
+  <text x="990" y="1960" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="2" fill="#4A6462">02 / 04</text>
+</svg>

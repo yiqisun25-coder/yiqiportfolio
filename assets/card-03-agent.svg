@@ -1,0 +1,112 @@
+<svg viewBox="0 0 1080 2300" width="1080" height="2300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#060D0F"/>
+      <stop offset="45%" stop-color="#060D0F"/>
+      <stop offset="100%" stop-color="#0E1F20"/>
+    </linearGradient>
+    <linearGradient id="hairline" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8FC1BB" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#8FC1BB" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#8FC1BB" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.56  0 0 0 0 0.76  0 0 0 0 0.73  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="2300" fill="url(#bg)"/>
+  <rect width="1080" height="2300" filter="url(#grain)"/>
+
+  <g fill="#CFE6E1">
+    <circle cx="120" cy="180" r="2.2" opacity="0.35"/>
+    <circle cx="860" cy="120" r="1.6" opacity="0.28"/>
+    <circle cx="950" cy="340" r="2.6" opacity="0.4"/>
+    <circle cx="80" cy="600" r="1.8" opacity="0.3"/>
+    <circle cx="990" cy="800" r="2.2" opacity="0.32"/>
+    <circle cx="60" cy="1100" r="2" opacity="0.28"/>
+    <circle cx="1000" cy="1450" r="1.8" opacity="0.3"/>
+    <circle cx="140" cy="1800" r="2.4" opacity="0.35"/>
+    <circle cx="920" cy="2050" r="1.6" opacity="0.26"/>
+  </g>
+
+  <!-- 页眉 -->
+  <circle cx="90" cy="96" r="6" fill="#8FC1BB"/>
+  <text x="112" y="103" font-family="JetBrains Mono, Consolas, monospace" font-size="22" letter-spacing="2" fill="#4A6462">生活Debug日志</text>
+  <rect x="90" y="150" width="900" height="1" fill="url(#hairline)"/>
+
+  <!-- 顶部系列标 -->
+  <text x="90" y="246" font-family="JetBrains Mono, Consolas, monospace" font-size="26" fill="#8FC1BB" opacity="0.9">// AI黑话翻译计划 03/04</text>
+
+  <!-- 关键词标题 -->
+  <text x="90" y="420" font-family="Songti SC, Noto Serif SC, serif" font-size="130" font-weight="700" letter-spacing="2" fill="#DCEBE8">AGENT</text>
+  <text x="90" y="482" font-family="Songti SC, Noto Serif SC, serif" font-size="42" letter-spacing="4" fill="#8FC1BB">｜自主员工</text>
+
+  <!-- 一句话 -->
+  <text font-family="Songti SC, Noto Serif SC, serif" font-size="34" letter-spacing="1" fill="#DCEBE8">
+    <tspan x="90" y="572">Agent 是一个</tspan>
+    <tspan x="90" y="624">"能自己做决定"的智能体。</tspan>
+    <tspan x="90" y="676">你只给它目标,不给步骤,</tspan>
+    <tspan x="90" y="728">它自己想办法完成。</tspan>
+  </text>
+
+  <!-- 补充说明 -->
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="806">这是三者里最"聪明"的。</tspan>
+    <tspan x="90" y="846">前面的 Skill 和 Workflow</tspan>
+    <tspan x="90" y="886">都要你安排好,而 Agent</tspan>
+    <tspan x="90" y="926">你只需要说清楚"我要什么结果",</tspan>
+    <tspan x="90" y="966">它会自己判断该用哪些技能、</tspan>
+    <tspan x="90" y="1006">该走哪些步骤,遇到问题还会自己调整。</tspan>
+  </text>
+
+  <!-- 比喻 -->
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="26" letter-spacing="1" fill="#8FC1BB">
+    <tspan x="90" y="1076">【拿餐厅打比方】</tspan>
+    <tspan x="90" y="1110">一个会自己动脑的店长</tspan>
+  </text>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="1210">你对店长说一句</tspan>
+    <tspan x="90" y="1250">"今晚生意给我搞好",</tspan>
+    <tspan x="90" y="1290">然后就可以走了。他会自己盘算:</tspan>
+  </text>
+
+  <!-- 思考泡泡:三个问题单独装框,呼应站内 debug 面板的虚线框语言 -->
+  <rect x="112" y="1318" width="700" height="150" rx="10" fill="none" stroke="#8FC1BB" stroke-width="1" stroke-dasharray="5 7" opacity="0.5"/>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="23" letter-spacing="0.5" fill="#CFE6E1">
+    <tspan x="136" y="1358">要不要多备点货?</tspan>
+    <tspan x="136" y="1398">几点排几个人上班?</tspan>
+    <tspan x="136" y="1438">今晚搞不搞促销?</tspan>
+  </text>
+
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="1518">——这些你都没教他,他自己安排。</tspan>
+    <tspan x="90" y="1558">Agent 就是这样:给目标,不给步骤。</tspan>
+    <tspan x="90" y="1598">它自己会调用 Skill、自己编排 Workflow,</tspan>
+    <tspan x="90" y="1638">朝着你要的结果去。</tspan>
+  </text>
+
+  <!-- 例子 -->
+  <text x="90" y="1713" font-family="JetBrains Mono, Consolas, monospace" font-size="24" letter-spacing="1" fill="#4A6462">你可能已经在用的 Agent：</text>
+  <g font-family="JetBrains Mono, Consolas, monospace" font-size="25" fill="#DCEBE8">
+    <circle cx="100" cy="1754" r="3.5" fill="#8FC1BB"/>
+    <text x="120" y="1760">你说"帮我做个竞品分析",</text>
+    <text x="120" y="1798">它自己去搜索、整理、写成一份报告</text>
+    <circle cx="100" cy="1848" r="3.5" fill="#8FC1BB"/>
+    <text x="120" y="1854">Claude Code:你说清楚需求,</text>
+    <text x="120" y="1892">它自己写代码、自己测试、自己改 bug</text>
+  </g>
+
+  <!-- 记住 -->
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" fill="#8FC1BB" opacity="0.9">
+    <tspan x="90" y="1988">// 记住:Agent 是员工,</tspan>
+    <tspan x="90" y="2028">// 特点是"给目标,不给步骤,</tspan>
+    <tspan x="90" y="2068">// 它自己搞定"。</tspan>
+  </text>
+
+  <!-- 页脚 -->
+  <rect x="90" y="2160" width="900" height="1" fill="#4A6462" opacity="0.3"/>
+  <text x="90" y="2210" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="3" fill="#4A6462">@Film:)</text>
+  <text x="990" y="2210" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="2" fill="#4A6462">03 / 04</text>
+</svg>

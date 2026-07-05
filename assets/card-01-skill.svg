@@ -1,0 +1,93 @@
+<svg viewBox="0 0 1080 1800" width="1080" height="1800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#060D0F"/>
+      <stop offset="45%" stop-color="#060D0F"/>
+      <stop offset="100%" stop-color="#0E1F20"/>
+    </linearGradient>
+    <linearGradient id="hairline" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8FC1BB" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#8FC1BB" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#8FC1BB" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.56  0 0 0 0 0.76  0 0 0 0 0.73  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="1800" fill="url(#bg)"/>
+  <rect width="1080" height="1800" filter="url(#grain)"/>
+
+  <g fill="#CFE6E1">
+    <circle cx="120" cy="180" r="2.2" opacity="0.35"/>
+    <circle cx="860" cy="120" r="1.6" opacity="0.28"/>
+    <circle cx="950" cy="300" r="2.6" opacity="0.4"/>
+    <circle cx="80" cy="520" r="1.8" opacity="0.3"/>
+    <circle cx="990" cy="640" r="2.2" opacity="0.32"/>
+    <circle cx="60" cy="900" r="2" opacity="0.28"/>
+    <circle cx="1000" cy="1200" r="1.8" opacity="0.3"/>
+    <circle cx="140" cy="1400" r="2.4" opacity="0.35"/>
+    <circle cx="920" cy="1560" r="1.6" opacity="0.26"/>
+  </g>
+
+  <!-- 页眉 -->
+  <circle cx="90" cy="96" r="6" fill="#8FC1BB"/>
+  <text x="112" y="103" font-family="JetBrains Mono, Consolas, monospace" font-size="22" letter-spacing="2" fill="#4A6462">生活Debug日志</text>
+  <rect x="90" y="150" width="900" height="1" fill="url(#hairline)"/>
+
+  <!-- 顶部系列标 -->
+  <text x="90" y="246" font-family="JetBrains Mono, Consolas, monospace" font-size="26" fill="#8FC1BB" opacity="0.9">// AI黑话翻译计划 01/04</text>
+
+  <!-- 关键词标题 -->
+  <text x="90" y="420" font-family="Songti SC, Noto Serif SC, serif" font-size="130" font-weight="700" letter-spacing="2" fill="#DCEBE8">SKILL</text>
+  <text x="90" y="482" font-family="Songti SC, Noto Serif SC, serif" font-size="42" letter-spacing="4" fill="#8FC1BB">｜一门手艺</text>
+
+  <!-- 一句话 -->
+  <text font-family="Songti SC, Noto Serif SC, serif" font-size="34" letter-spacing="1" fill="#DCEBE8">
+    <tspan x="90" y="572">Skill 就是一个"专项技能",</tspan>
+    <tspan x="90" y="624">它只会干一件事,</tspan>
+    <tspan x="90" y="676">但能把这件事干得又快又好。</tspan>
+    <tspan x="90" y="728">你调用它,它就执行,</tspan>
+    <tspan x="90" y="780">不会多问、不会自己发挥。</tspan>
+    <tspan x="90" y="832">给什么指令,做什么活。</tspan>
+  </text>
+
+  <!-- 比喻 -->
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="26" letter-spacing="1" fill="#8FC1BB">
+    <tspan x="90" y="902">【拿餐厅打比方】</tspan>
+    <tspan x="90" y="936">会做一道菜的厨师</tspan>
+  </text>
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" letter-spacing="0.5" fill="#DCEBE8">
+    <tspan x="90" y="1036">想象后厨有个专门煎蛋的厨师。</tspan>
+    <tspan x="90" y="1076">你喊一声"煎蛋",他立刻给你煎一个,</tspan>
+    <tspan x="90" y="1116">不会问你"为什么要吃蛋""要不要配点别的"。</tspan>
+    <tspan x="90" y="1156">他就负责煎蛋这一件事,</tspan>
+    <tspan x="90" y="1196">而且煎得很稳定。</tspan>
+    <tspan x="90" y="1236">Skill 就是这样——</tspan>
+    <tspan x="90" y="1276">一个被打包好的能力,</tspan>
+    <tspan x="90" y="1316">输入指令→输出结果,中间不拐弯。</tspan>
+  </text>
+
+  <!-- 例子 -->
+  <text x="90" y="1371" font-family="JetBrains Mono, Consolas, monospace" font-size="24" letter-spacing="1" fill="#4A6462">你可能已经在用的 Skill：</text>
+  <g font-family="JetBrains Mono, Consolas, monospace" font-size="25" fill="#DCEBE8">
+    <circle cx="100" cy="1412" r="3.5" fill="#8FC1BB"/>
+    <text x="120" y="1418">把一篇几千字的长文档总结成要点</text>
+    <circle cx="100" cy="1458" r="3.5" fill="#8FC1BB"/>
+    <text x="120" y="1464">把一堆乱数据整理成规整的表格</text>
+    <circle cx="100" cy="1504" r="3.5" fill="#8FC1BB"/>
+    <text x="120" y="1510">按你给的固定模板生成一份周报</text>
+  </g>
+
+  <!-- 记住 -->
+  <text font-family="JetBrains Mono, Consolas, monospace" font-size="25" fill="#8FC1BB" opacity="0.9">
+    <tspan x="90" y="1610">// 记住:Skill 是名词,</tspan>
+    <tspan x="90" y="1650">// 是"一门手艺"。它是最小的能力单位。</tspan>
+  </text>
+
+  <!-- 页脚 -->
+  <rect x="90" y="1660" width="900" height="1" fill="#4A6462" opacity="0.3"/>
+  <text x="90" y="1710" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="3" fill="#4A6462">@Film:)</text>
+  <text x="990" y="1710" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="2" fill="#4A6462">01 / 04</text>
+</svg>
